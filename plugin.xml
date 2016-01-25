@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="com.cordova.plugin.qiniuUpload" version="1.0.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cc.legle.cordovaQiniu" version="1.0.0">
 	<name>qiniuUpload</name>
 	<description>基于七牛云编写的Cordova插件</description>
 	<license>Apache 2.0</license>
