@@ -23,10 +23,17 @@
     self.callbackId = command.callbackId;
     NSLog(@"token:%@",self.callbackId);
 
-    _filePath = [options objectForKey:@"filePath"];
+    //_filePath = [options objectForKey:@"filePath"];
 
-    NSLog(@"filePath:%@",_filePath);
+    
+    
+    //NSLog(@"filePath:%@",_filePath);
 
+    
+    _filePaths = [options objectForKey:@"filePath"];
+    
+    
+    
     NSString* uptoken = [options objectForKey:@"uptoken"];
 
     if(uptoken&&uptoken.length>1)
@@ -44,8 +51,15 @@
 
     self.rUploader = [[QiniuResumableUploader alloc] initWithToken:self.token];
     self.rUploader.delegate = self;
-
-    [self.sUploader uploadFile:_filePath key:nil extra:nil];
+    _filecounter=0;
+    _filetotal=_filePaths.count;
+    _returns = [[NSMutableArray alloc] init];
+    for (id obj in _filePaths) {
+        [self.sUploader uploadFile:obj key:nil extra:nil];
+    }
+    
+    
+    //[self.sUploader uploadFile:_filePath key:nil extra:nil];
 
     /*
      if (echo != nil && [echo length] > 0) {
@@ -62,13 +76,21 @@
 }
 - (void)uploadSucceeded:(NSString *)theFilePath ret:(NSDictionary *)ret
 {
+    _filecounter++;
+    //NSString *k = [[NSString alloc] initWithFormat:@"%d",_filecounter];
+    //[_returns setValue:ret forKey:k];
+    [_returns addObject:ret];
     NSString *succeedMsg = [NSString stringWithFormat:@"Upload Succeeded: - Ret: %@\n", ret];
     NSLog(@"token:%@",self.callbackId);
     NSLog(@"uploadSucceeded:%@",succeedMsg);
     CDVPluginResult* pluginResult = nil;
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:ret];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:_returns];
+    //pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:ret];
+    if (_filetotal==_filecounter) {
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
+    }
+    //[self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
 
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
 }
 
 // Upload failed
