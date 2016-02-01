@@ -90,9 +90,18 @@ public class QiniuPlugin extends CordovaPlugin implements UpCompletionHandler {
 		{
 		  uptoken = QiniuKey.UPLOAD_TOKEN;
 		}
-		String name = StrUtils.appendPrefix(prefix, StrUtils.getFileName(filePath));	//获取文件名称 添加前缀
-		filePath = URLDecoder.decode(filePath, "UTF-8");	//文件路径解码
-		uploadManager.put(new File(filePath), null, uptoken, this, null);
+		//String name = StrUtils.appendPrefix(prefix, StrUtils.getFileName(filePath));	//获取文件名称 添加前缀
+		//filePath = URLDecoder.decode(filePath, "UTF-8");	//文件路径解码
+		//uploadManager.put(new File(filePath), null, uptoken, this, null);
+
+		JSONArray filePaths = jsons.optJSONArray("filePath");
+		push_count = filePaths.length();
+		for(int i = 0 ; i < filePaths.length() ; i++){
+			String filePath = filePaths.optString(i);
+			String name = StrUtils.appendPrefix(prefix, StrUtils.getFileName(filePath));	//获取文件名称 添加前缀
+			filePath = URLDecoder.decode(filePath, "UTF-8");	//文件路径解码
+			uploadManager.put(new File(filePath), null, uptoken, this,null);	//开始上传
+		}
 	}
 
 	private void uploadArrayFile(JSONArray args) throws JSONException,UnsupportedEncodingException{
