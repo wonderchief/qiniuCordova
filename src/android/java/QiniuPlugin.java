@@ -94,7 +94,7 @@ public class QiniuPlugin extends CordovaPlugin implements UpCompletionHandler {
 		//filePath = URLDecoder.decode(filePath, "UTF-8");	//文件路径解码
 		//uploadManager.put(new File(filePath), null, uptoken, this, null);
 
-		JSONArray filePaths = jsons.optJSONArray("filePath");
+		JSONArray filePaths = args.optJSONObject(0).optJSONArray("filePath");
 		push_count = filePaths.length();
 		for(int i = 0 ; i < filePaths.length() ; i++){
 			String filePath = filePaths.optString(i);
