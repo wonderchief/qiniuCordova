@@ -18,7 +18,8 @@
     "qiniu",
     "upload",
     "ecosystem:cordova",
-    "cordova-android"
+    "cordova-android",
+    "cordova-ios"
   ],
   "author": "wonderchief",
   "license": "MIT",
