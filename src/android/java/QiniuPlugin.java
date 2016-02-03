@@ -96,9 +96,12 @@ public class QiniuPlugin extends CordovaPlugin implements UpCompletionHandler {
 		JSONArray filePaths = args.optJSONObject(0).optJSONArray("filePath");
 		push_count = filePaths.length();
 		for(int i = 0 ; i < filePaths.length() ; i++){
-			String filePath = filePaths.optString(i);
-			filePath = StrUtils.appendPrefix(prefix, StrUtils.getFileName(filePath));	//获取文件名称 添加前缀
+			String filePath = filePaths.optString(i).replace("file://","");
+			//Log.d("filePath1:",filePath);
+			//filePath = StrUtils.appendPrefix(prefix, StrUtils.getFileName(filePath));	//获取文件名称 添加前缀
+			Log.d("filePath2:",filePath);
 			filePath = URLDecoder.decode(filePath, "UTF-8");	//文件路径解码
+			Log.d("filePath3:",filePath);
 			uploadManager.put(new File(filePath), null, uptoken, this,null);	//开始上传
 		}
 	}
@@ -121,32 +124,21 @@ public class QiniuPlugin extends CordovaPlugin implements UpCompletionHandler {
 	@Override
 	public void complete(String name, ResponseInfo info, JSONObject json) {
 		int status = info.statusCode;
-		JSONObject jsonObject = new JSONObject();
-		try {
-			jsonObject.put("name", name);
-			jsonObject.put("status", status);
-			jsonObject.put("msg", info.error);
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		JSONObject jsonObject = json;
 		if(flag){	//批量上传
 			pushs.put(jsonObject);
 			Log.e("count", pushs.length()+"");
 			Log.e("tokal", push_count+"");
-			if(pushs.length() >= push_count){
-				boolean isError = false;
-				for(int i = 0 ; i < pushs.length() ; i++){
-					if(pushs.optJSONObject(i).optInt("status") != 200){
-						callbackContext.error(jsonObject);
-						isError = true;
-						break;
-					}
-				}
-				if(!isError){
+			if(status == 200) {
+				if (pushs.length() >= push_count) {
 					callbackContext.success(pushs);
+					pushs = new JSONArray();
+					push_count = 0;
 				}
-				pushs = new JSONArray();
-				push_count = 0;
+			}
+			else
+			{
+				callbackContext.error(jsonObject);
 			}
 		}else{	//单个上传
 			if (status == 200) {
