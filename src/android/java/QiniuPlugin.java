@@ -82,13 +82,12 @@ public class QiniuPlugin extends CordovaPlugin implements UpCompletionHandler {
 	}
 
 	private void uploadFile(JSONArray args) throws JSONException,UnsupportedEncodingException {
-		flag = false;
+		flag = true;
 		String prefix = args.optJSONObject(0).getString("prefix");
-		String filePath = args.optJSONObject(0).getString("filePath");
 		String uptoken = args.optJSONObject(0).getString("uptoken");
-		if(!uptoken)
+		if(uptoken == null || uptoken.isEmpty())
 		{
-		  uptoken = QiniuKey.UPLOAD_TOKEN;
+			uptoken = QiniuKey.UPLOAD_TOKEN;
 		}
 		//String name = StrUtils.appendPrefix(prefix, StrUtils.getFileName(filePath));	//获取文件名称 添加前缀
 		//filePath = URLDecoder.decode(filePath, "UTF-8");	//文件路径解码
@@ -98,7 +97,7 @@ public class QiniuPlugin extends CordovaPlugin implements UpCompletionHandler {
 		push_count = filePaths.length();
 		for(int i = 0 ; i < filePaths.length() ; i++){
 			String filePath = filePaths.optString(i);
-			String name = StrUtils.appendPrefix(prefix, StrUtils.getFileName(filePath));	//获取文件名称 添加前缀
+			filePath = StrUtils.appendPrefix(prefix, StrUtils.getFileName(filePath));	//获取文件名称 添加前缀
 			filePath = URLDecoder.decode(filePath, "UTF-8");	//文件路径解码
 			uploadManager.put(new File(filePath), null, uptoken, this,null);	//开始上传
 		}
